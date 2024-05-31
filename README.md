@@ -1,8 +1,8 @@
-# 🤫 Vocode 0.0.156 Preview
+# 🤫 Vocode 0.0.112 Preview
 
-👋 Hey there! If you're seeing this that means you've discovered the Vocode 0.0.156 Early Preview Repo!
+👋 Hey there! If you're seeing this that means you've discovered the Vocode 0.0.112 Early Preview Repo!
 
-Either we (Vocode) sent this your way or you are busy little bee and found it on your own, either way we want to reward your excellence in the Vocode community with this early preview of our work over the last few months AND to invite you to our private channel on our Discord [(Click here to join!)](https://discord.gg/MVQD5bmf49) so that you can have unfettered access to ask Vocode employees questions, get help, and even potentially contribute back to our 0.0.156 release!
+Either we (Vocode) sent this your way or you are busy little bee and found it on your own, either way we want to reward your excellence in the Vocode community with this early preview of our work over the last few months AND to invite you to our private channel on our Discord [(Click here to join!)](https://discord.gg/MVQD5bmf49) so that you can have unfettered access to ask Vocode employees questions, get help, and even potentially contribute back to our 0.0.112 release!
 
 If you're seeing this and don't have access to the new channels, please reach out to Mac, Ajay, George or really any other Vocode employee and we'll see that you do :)
 
