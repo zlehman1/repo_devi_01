@@ -1,4 +1,4 @@
-import pkg_resources
+import importlib.util
 
 
 def is_extra_installed(extra):
@@ -8,6 +8,7 @@ def is_extra_installed(extra):
     :param extra: The extra category to check (e.g., 'agents', 'synthesizers').
     :return: Boolean indicating if the specified extra package is installed.
     """
+    # Define the mapping of extras to their respective packages
     extras_mapping = {
         "agents": "openai",
         "synthesizers": "elevenlabs",
@@ -22,9 +23,6 @@ def is_extra_installed(extra):
     if not package:
         raise ValueError(f"Unknown extra category: {extra}")
 
-    try:
-        # Attempt to get the distribution for the package
-        pkg_resources.get_distribution(package)
-        return True
-    except pkg_resources.DistributionNotFound:
-        return False
+    # Check if the package is available
+    package_spec = importlib.util.find_spec(package)
+    return package_spec is not None
