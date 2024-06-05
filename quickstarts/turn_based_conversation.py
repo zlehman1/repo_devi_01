@@ -13,8 +13,9 @@ class Settings(BaseSettings):
     These parameters can be configured with environment variables.
     """
 
-    openai_api_key: str
-    azure_speech_key: str
+    openai_api_key: str = "ENTER_YOUR_OPENAI_API_KEY_HERE"
+    azure_speech_key: str = "ENTER_YOUR_AZURE_KEY_HERE"
+
     azure_speech_region: str = "eastus"
 
     model_config = SettingsConfigDict(

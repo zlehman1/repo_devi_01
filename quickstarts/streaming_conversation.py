@@ -22,14 +22,15 @@ configure_pretty_logging()
 
 class Settings(BaseSettings):
     """
-    Settings for the turn-based conversation quickstart.
+    Settings for the streaming conversation quickstart.
     These parameters can be configured with environment variables.
     """
 
-    openai_api_key: str
-    azure_speech_key: str
+    openai_api_key: str = "ENTER_YOUR_OPENAI_API_KEY_HERE"
+    azure_speech_key: str = "ENTER_YOUR_AZURE_KEY_HERE"
+    deepgram_api_key: str = "ENTER_YOUR_DEEPGRAM_API_KEY_HERE"
+
     azure_speech_region: str = "eastus"
-    deepgram_api_key: str
 
     model_config = SettingsConfigDict(
         env_file=".env",
