@@ -1,5 +1,5 @@
 import functools
-from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, Tuple
+from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, Tuple, Union
 
 from loguru import logger
 
@@ -13,6 +13,7 @@ try:
 except ImportError:
     logger.debug("Sentry SDK not detected -- disabling metrics!")
     SENTRY_SDK_AVAILABLE = False
+    Span = None
 
 if TYPE_CHECKING:
     from vocode.streaming.synthesizer.base_synthesizer import BaseSynthesizer
@@ -27,6 +28,8 @@ _SYNTHESIZER_NAMES = {
 }
 
 _FILTERED_SPANS = {"middleware.starlette.receive", "middleware.starlette.send", "Queue.get"}
+
+SpanType = Union[Span, None]
 
 
 class CustomSentrySpans:
@@ -207,7 +210,9 @@ def complete_span_by_op(op_value):
 
 
 @sentry_configured
-def sentry_create_span(*args, sentry_callable: Callable, **kwargs) -> Span:
+def sentry_create_span(*args, sentry_callable: Callable | str, **kwargs) -> Span:
+    if sentry_callable == "start_span":
+        sentry_callable = sentry_sdk.start_span
     span = sentry_callable(*args, **kwargs)
 
     return set_tags(span)

@@ -1,7 +1,6 @@
 import os
 from typing import Any, AsyncGenerator, Dict
 
-import sentry_sdk
 from anthropic import AsyncAnthropic, AsyncStream
 from anthropic.types import MessageStreamEvent
 from loguru import logger
@@ -74,11 +73,11 @@ class AnthropicAgent(RespondAgent[AnthropicAgentConfig]):
         chat_parameters = self.get_chat_parameters(messages)
         try:
             first_sentence_total_span = sentry_create_span(
-                sentry_callable=sentry_sdk.start_span, op=CustomSentrySpans.LLM_FIRST_SENTENCE_TOTAL
+                sentry_callable="start_span", op=CustomSentrySpans.LLM_FIRST_SENTENCE_TOTAL
             )
 
             ttft_span = sentry_create_span(
-                sentry_callable=sentry_sdk.start_span, op=CustomSentrySpans.TIME_TO_FIRST_TOKEN
+                sentry_callable="start_span", op=CustomSentrySpans.TIME_TO_FIRST_TOKEN
             )
             stream = await self._get_anthropic_stream(chat_parameters)
         except Exception as e:

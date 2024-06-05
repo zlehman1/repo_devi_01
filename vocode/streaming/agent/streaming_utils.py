@@ -1,9 +1,8 @@
 import re
 from typing import AsyncGenerator, AsyncIterable, List, Literal, Optional, Union
 
-from sentry_sdk.tracing import Span
-
 from vocode.streaming.models.actions import FunctionCall, FunctionFragment
+from vocode.utils.sentry_utils import SpanType
 
 TOKENS_TO_GENERATE_PAST_PERIOD = 3
 SENTENCE_ENDINGS_EXCEPT_PERIOD_PATTERN = r"[?!\n\t\r]"
@@ -41,7 +40,7 @@ async def collate_response_async(
     conversation_id: str,
     gen: AsyncIterable[Union[str, FunctionFragment]],
     get_functions: Literal[True, False] = False,
-    sentry_span: Optional[Span] = None,
+    sentry_span: Optional[SpanType] = None,
 ) -> AsyncGenerator[
     Union[str, FunctionCall],
     None,
@@ -102,7 +101,7 @@ async def stream_response_async(
     conversation_id: str,
     gen: AsyncIterable[Union[str, FunctionFragment]],
     get_functions: Literal[True, False] = False,
-    sentry_span: Optional[Span] = None,
+    sentry_span: Optional[SpanType] = None,
 ) -> AsyncGenerator[
     Union[str, FunctionCall],
     None,

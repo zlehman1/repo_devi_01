@@ -21,9 +21,7 @@ from typing import (
     Union,
 )
 
-import sentry_sdk
 from loguru import logger
-from sentry_sdk.tracing import Span
 
 from vocode.streaming.action.worker import ActionsWorker
 from vocode.streaming.agent.base_agent import (
@@ -71,6 +69,7 @@ from vocode.streaming.utils.worker import (
 )
 from vocode.utils.sentry_utils import (
     CustomSentrySpans,
+    SpanType,
     complete_span_by_op,
     sentry_create_span,
     synthesizer_base_name_if_should_report_to_sentry,
@@ -445,19 +444,19 @@ class StreamingConversation(Generic[OutputDeviceType]):
                 synthesizer_base_name: Optional[str] = (
                     synthesizer_base_name_if_should_report_to_sentry(self.conversation.synthesizer)
                 )
-                create_speech_span: Optional[Span] = None
-                ttft_span: Optional[Span] = None
-                synthesis_span: Optional[Span] = None
+                create_speech_span: Optional[SpanType] = None
+                ttft_span: Optional[SpanType] = None
+                synthesis_span: Optional[SpanType] = None
                 if synthesizer_base_name and agent_response_message.is_first:
                     complete_span_by_op(CustomSentrySpans.LANGUAGE_MODEL_TIME_TO_FIRST_TOKEN)
 
                     sentry_create_span(
-                        sentry_callable=sentry_sdk.start_span,
+                        sentry_callable="start_span",
                         op=CustomSentrySpans.SYNTHESIS_TIME_TO_FIRST_TOKEN,
                     )
 
                     synthesis_span = sentry_create_span(
-                        sentry_callable=sentry_sdk.start_span,
+                        sentry_callable="start_span",
                         op=f"{synthesizer_base_name}{CustomSentrySpans.SYNTHESIZER_SYNTHESIS_TOTAL}",
                     )
                     if synthesis_span:
@@ -831,7 +830,7 @@ class StreamingConversation(Generic[OutputDeviceType]):
         )
 
     def _maybe_create_first_chunk_span(self, synthesis_result: SynthesisResult, message: str):
-        first_chunk_span: Optional[Span] = None
+        first_chunk_span: Optional[SpanType] = None
         if synthesis_result.synthesis_total_span:
             synthesis_result.synthesis_total_span.set_tag("message_length", len(message))
         if synthesis_result.ttft_span:
@@ -842,7 +841,7 @@ class StreamingConversation(Generic[OutputDeviceType]):
             )
         return first_chunk_span
 
-    def _track_first_chunk(self, first_chunk_span: Span, synthesis_result: SynthesisResult):
+    def _track_first_chunk(self, first_chunk_span: SpanType, synthesis_result: SynthesisResult):
         complete_span_by_op(CustomSentrySpans.SYNTHESIS_TIME_TO_FIRST_TOKEN)
         first_chunk_span.finish()
         if synthesis_result.ttft_span:

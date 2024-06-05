@@ -1,8 +1,6 @@
 import queue
 from datetime import datetime, timezone
-from typing import Optional
 
-import sentry_sdk
 from azure.cognitiveservices.speech.audio import (
     AudioStreamFormat,
     AudioStreamWaveFormat,
@@ -76,7 +74,7 @@ class AzureTranscriber(BaseThreadAsyncTranscriber[AzureTranscriberConfig]):
     def recognized_sentence_final(self, evt):
 
         sentry_create_span(
-            sentry_callable=sentry_sdk.start_span,
+            sentry_callable="start_span",
             op=CustomSentrySpans.LATENCY_OF_CONVERSATION,
             start_timestamp=datetime.now(tz=timezone.utc),
         )

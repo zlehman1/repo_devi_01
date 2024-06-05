@@ -2,7 +2,6 @@ import os
 import random
 from typing import Any, AsyncGenerator, Dict, List, Optional, TypeVar, Union
 
-import sentry_sdk
 from loguru import logger
 from openai import AsyncAzureOpenAI, AsyncOpenAI
 
@@ -210,11 +209,11 @@ class ChatGPTAgent(RespondAgent[ChatGPTAgentConfigType]):
             sentry_span_tags.set(span_tags)
 
         first_sentence_total_span = sentry_create_span(
-            sentry_callable=sentry_sdk.start_span, op=CustomSentrySpans.LLM_FIRST_SENTENCE_TOTAL
+            sentry_callable="start_span", op=CustomSentrySpans.LLM_FIRST_SENTENCE_TOTAL
         )
 
         ttft_span = sentry_create_span(
-            sentry_callable=sentry_sdk.start_span, op=CustomSentrySpans.TIME_TO_FIRST_TOKEN
+            sentry_callable="start_span", op=CustomSentrySpans.TIME_TO_FIRST_TOKEN
         )
 
         stream = await self._create_openai_stream(chat_parameters)

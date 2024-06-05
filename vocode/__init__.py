@@ -3,8 +3,14 @@ from contextvars import ContextVar, Token
 from typing import Any
 from uuid import UUID
 
-import sentry_sdk
 from loguru import logger
+
+try:
+    import sentry_sdk
+
+    SENTRY_SDK_AVAILABLE = True
+except ImportError:
+    SENTRY_SDK_AVAILABLE = False
 
 environment = {}
 logger.disable("vocode")
@@ -23,10 +29,11 @@ class ContextWrapper:
     def set(self, value: Any) -> Token:
         """Set a context variable."""
         self.__token = self.__value.set(value)
-        if isinstance(value, str):
-            sentry_sdk.set_tag(self.__value.name, value)
-        if isinstance(value, UUID):
-            sentry_sdk.set_tag(self.__value.name, str(value))
+        if SENTRY_SDK_AVAILABLE:
+            if isinstance(value, str):
+                sentry_sdk.set_tag(self.__value.name, value)
+            if isinstance(value, UUID):
+                sentry_sdk.set_tag(self.__value.name, str(value))
 
         return self.__token
 

@@ -5,7 +5,6 @@ from datetime import datetime, timezone
 from typing import List, Optional, Tuple, Union
 from urllib.parse import urlencode
 
-import sentry_sdk
 import websockets
 from loguru import logger
 from pydantic.v1 import BaseModel, Field
@@ -532,7 +531,7 @@ class DeepgramTranscriber(BaseAsyncTranscriber[DeepgramTranscriberConfig]):
         self,
     ):
         with sentry_create_span(
-            sentry_callable=sentry_sdk.start_span,
+            sentry_callable="start_span",
             op=CustomSentrySpans.LATENCY_OF_TRANSCRIPTION_START,
             start_timestamp=self.start_ts,
         ) as transcription_span:
@@ -617,7 +616,7 @@ class DeepgramTranscriber(BaseAsyncTranscriber[DeepgramTranscriberConfig]):
         # here instead, and uncomment the transcription_latency span
         # start_timestamp=is_final_spoken_ts,
         latency_of_conversation_span = sentry_create_span(
-            sentry_callable=sentry_sdk.start_span,
+            sentry_callable="start_span",
             op=CustomSentrySpans.LATENCY_OF_CONVERSATION,
             start_timestamp=is_final_ts,
         )

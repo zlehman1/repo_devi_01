@@ -7,7 +7,6 @@ import typing
 from enum import Enum
 from typing import TYPE_CHECKING, AsyncGenerator, Dict, Generic, Optional, Tuple, TypeVar, Union
 
-import sentry_sdk
 from loguru import logger
 from pydantic.v1 import BaseModel
 
@@ -442,7 +441,7 @@ class RespondAgent(BaseAgent[AgentConfigType]):
                 # TODO (EA): this is quite ugly but necessary to have the agent act properly after an action completes
                 if not isinstance(agent_input, ActionResultAgentInput):
                     sentry_create_span(
-                        sentry_callable=sentry_sdk.start_span,
+                        sentry_callable="start_span",
                         op=CustomSentrySpans.LANGUAGE_MODEL_TIME_TO_FIRST_TOKEN,
                     )
                 should_stop = await self.handle_generate_response(transcription, agent_input)

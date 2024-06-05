@@ -10,7 +10,6 @@ import aiohttp
 from loguru import logger
 from nltk.tokenize import word_tokenize
 from nltk.tokenize.treebank import TreebankWordDetokenizer
-from sentry_sdk.tracing import Span as SentrySpan
 
 from vocode.streaming.models.agent import FillerAudioConfig
 from vocode.streaming.models.audio import AudioEncoding, SamplingRate
@@ -22,6 +21,7 @@ from vocode.streaming.telephony.constants import MULAW_SILENCE_BYTE, PCM_SILENCE
 from vocode.streaming.utils import convert_wav, get_chunk_size_per_second
 from vocode.streaming.utils.async_requester import AsyncRequestor
 from vocode.streaming.utils.create_task import asyncio_create_task_with_done_error_log
+from vocode.utils.sentry_utils import SpanType
 
 FILLER_PHRASES = [
     BaseMessage(text="Um..."),
@@ -61,8 +61,8 @@ class SynthesisResult:
         get_message_up_to: Callable[[float], str],
         cached: bool = False,
         is_first: bool = False,
-        synthesis_total_span: Optional[SentrySpan] = None,
-        ttft_span: Optional[SentrySpan] = None,
+        synthesis_total_span: Optional[SpanType] = None,
+        ttft_span: Optional[SpanType] = None,
     ):
         self.chunk_generator = chunk_generator
         self.get_message_up_to = get_message_up_to
