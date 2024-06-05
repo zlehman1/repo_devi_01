@@ -37,6 +37,7 @@ class ElevenLabsSynthesizer(BaseSynthesizer[ElevenLabsSynthesizerConfig]):
         self.model_id = synthesizer_config.model_id
         self.optimize_streaming_latency = synthesizer_config.optimize_streaming_latency
         self.words_per_minute = 150
+        self.upsample = False
 
         if self.synthesizer_config.audio_encoding == AudioEncoding.LINEAR16:
             match self.synthesizer_config.sampling_rate:
@@ -48,6 +49,9 @@ class ElevenLabsSynthesizer(BaseSynthesizer[ElevenLabsSynthesizerConfig]):
                     self.output_format = "pcm_24000"
                 case SamplingRate.RATE_44100:
                     self.output_format = "pcm_44100"
+                case SamplingRate.RATE_48000:
+                    self.output_format = "pcm_44100"
+                    self.upsample = SamplingRate.RATE_48000.value
                 case _:
                     raise ValueError(
                         f"Unsupported sampling rate: {self.synthesizer_config.sampling_rate}. Elevenlabs only supports 16000, 22050, 24000, and 44100 Hz."
@@ -141,6 +145,12 @@ class ElevenLabsSynthesizer(BaseSynthesizer[ElevenLabsSynthesizerConfig]):
                 logger.error(f"ElevenLabs API failed: {stream.status_code} {error.decode('utf-8')}")
                 raise Exception(f"ElevenLabs API returned {stream.status_code} status code")
             async for chunk in stream.aiter_bytes(chunk_size):
+                if self.upsample:
+                    chunk = self._resample_chunk(
+                        chunk,
+                        self.synthesizer_config.sampling_rate,
+                        self.upsample,
+                    )
                 chunk_queue.put_nowait(chunk)
         except asyncio.CancelledError:
             pass
