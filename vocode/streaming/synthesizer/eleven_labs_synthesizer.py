@@ -37,7 +37,7 @@ class ElevenLabsSynthesizer(BaseSynthesizer[ElevenLabsSynthesizerConfig]):
         self.model_id = synthesizer_config.model_id
         self.optimize_streaming_latency = synthesizer_config.optimize_streaming_latency
         self.words_per_minute = 150
-        self.upsample = False
+        self.upsample = None
         self.sample_rate = self.synthesizer_config.sampling_rate
 
         if self.synthesizer_config.audio_encoding == AudioEncoding.LINEAR16:

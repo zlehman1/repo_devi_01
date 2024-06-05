@@ -108,7 +108,8 @@ class ElevenLabsWSSynthesizer(
             "writer": None,
         }
         self.end_of_turn = False
-        self.upsample = False
+
+        self.upsample = None
         self.sample_rate = self.synthesizer_config.sampling_rate
 
         # While this looks useless, we need to assign the response of `asyncio.gather`

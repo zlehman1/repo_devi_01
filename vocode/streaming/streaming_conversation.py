@@ -842,6 +842,8 @@ class StreamingConversation(Generic[OutputDeviceType]):
         return first_chunk_span
 
     def _track_first_chunk(self, first_chunk_span: SpanType, synthesis_result: SynthesisResult):
+        if not first_chunk_span:
+            raise ValueError("first_chunk_span should not be None")
         complete_span_by_op(CustomSentrySpans.SYNTHESIS_TIME_TO_FIRST_TOKEN)
         first_chunk_span.finish()
         if synthesis_result.ttft_span:

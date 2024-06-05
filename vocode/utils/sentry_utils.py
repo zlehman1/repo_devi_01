@@ -13,8 +13,7 @@ try:
 except ImportError:
     logger.debug("Sentry SDK not detected -- disabling metrics!")
     SENTRY_SDK_AVAILABLE = False
-    Span = None
-    _SpanRecorder = object
+    Span = None  # type: ignore
 
 if TYPE_CHECKING:
     from vocode.streaming.synthesizer.base_synthesizer import BaseSynthesizer
@@ -211,9 +210,11 @@ def complete_span_by_op(op_value):
 
 
 @sentry_configured
-def sentry_create_span(*args, sentry_callable: Callable | str, **kwargs) -> Span:
+def sentry_create_span(*args, sentry_callable: Callable | str, **kwargs) -> SpanType:
     if sentry_callable == "start_span":
         sentry_callable = sentry_sdk.start_span
+    elif isinstance(sentry_callable, str):
+        raise ValueError("sentry_callable must be a callable or 'start_span'.")
     span = sentry_callable(*args, **kwargs)
 
     return set_tags(span)
@@ -230,6 +231,8 @@ if SENTRY_SDK_AVAILABLE:
             self._low_prio_spans = []
 
         def add(self, span: SpanType):
+            if span is None:
+                raise ValueError("Span should not be None.")
             if span.op in _FILTERED_SPANS and span.description in _FILTERED_SPANS:
                 self._low_prio_spans.append(span)
             else:
