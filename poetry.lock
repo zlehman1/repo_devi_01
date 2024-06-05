@@ -2175,7 +2175,7 @@ twitter = ["twython"]
 name = "numpy"
 version = "1.26.4"
 description = "Fundamental package for array computing in Python"
-optional = true
+optional = false
 python-versions = ">=3.9"
 files = [
     {file = "numpy-1.26.4-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:9ff0f4f29c51e2803569d7a51c2304de5554655a60c5d776e35b4a41413830d0"},
@@ -4464,4 +4464,4 @@ transcribers = ["google-cloud-speech"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<4.0"
-content-hash = "ee0e29c5a613ac943287786c64a591f516801fcada5aa7411d9f2d26ff2a7405"
+content-hash = "d4e17e3893cf1e966170dd6efa025eb6fede0c2eae4e2e43903a6bbdb48696ef"

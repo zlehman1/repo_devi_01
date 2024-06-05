@@ -219,31 +219,31 @@ def sentry_create_span(*args, sentry_callable: Callable | str, **kwargs) -> Span
     return set_tags(span)
 
 
-class SpanRecorder(_SpanRecorder):
+if SENTRY_SDK_AVAILABLE:
 
-    def __init__(self, maxlen):
-        self.maxlen = 900
-        self._auto_spans = []
-        self._custom_spans = []
-        self._low_prio_spans = []
+    class SpanRecorder(_SpanRecorder):
 
-    def add(self, span: Span):
-        if span.op in _FILTERED_SPANS and span.description in _FILTERED_SPANS:
-            self._low_prio_spans.append(span)
-        else:
-            if CustomSentrySpans.is_present(span.op):
-                self._custom_spans.append(span)
+        def __init__(self, maxlen):
+            self.maxlen = 900
+            self._auto_spans = []
+            self._custom_spans = []
+            self._low_prio_spans = []
+
+        def add(self, span: SpanType):
+            if span.op in _FILTERED_SPANS and span.description in _FILTERED_SPANS:
+                self._low_prio_spans.append(span)
             else:
-                self._auto_spans.append(span)
+                if CustomSentrySpans.is_present(span.op):
+                    self._custom_spans.append(span)
+                else:
+                    self._auto_spans.append(span)
 
-    @property
-    def spans(self):
-        return (self._custom_spans + self._auto_spans + self._low_prio_spans)[: self.maxlen]
+        @property
+        def spans(self):
+            return (self._custom_spans + self._auto_spans + self._low_prio_spans)[: self.maxlen]
 
+    def init_span_recorder(self, maxlen: int):
+        if self._span_recorder is None:
+            self._span_recorder = SpanRecorder(maxlen)
 
-def init_span_recorder(self, maxlen: int):
-    if self._span_recorder is None:
-        self._span_recorder = SpanRecorder(maxlen)
-
-
-Span.init_span_recorder = init_span_recorder  # type: ignore
+    Span.init_span_recorder = init_span_recorder  # type: ignore

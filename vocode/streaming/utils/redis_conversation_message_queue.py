@@ -1,11 +1,13 @@
-from typing import Annotated, AsyncGenerator, Literal, Union
+from typing import TYPE_CHECKING, AsyncGenerator
 
 from loguru import logger
-from pydantic.v1 import BaseModel, Field, parse_obj_as
-from redis.asyncio import Redis
+from pydantic.v1 import BaseModel, parse_obj_as
 
 from vocode.streaming.utils.redis import initialize_redis
 from vocode.streaming.utils.singleton import Singleton
+
+if TYPE_CHECKING:
+    from redis.asyncio import Redis
 
 
 class RedisMessage(BaseModel):

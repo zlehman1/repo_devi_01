@@ -2,10 +2,20 @@ import os
 from typing import Optional, TypeVar
 
 from loguru import logger
-from redis.asyncio import Redis
-from redis.backoff import ExponentialBackoff, NoBackoff
-from redis.exceptions import ConnectionError, TimeoutError
-from redis.retry import Retry
+
+try:
+    from redis.asyncio import Redis
+    from redis.backoff import ExponentialBackoff, NoBackoff
+    from redis.exceptions import ConnectionError, TimeoutError
+    from redis.retry import Retry
+except ImportError:
+    logger.warning("Redis not installed!")
+    Redis = None
+    ExponentialBackoff = None
+    NoBackoff = None
+    ConnectionError = None
+    TimeoutError = None
+    Retry = None
 
 from vocode.streaming.utils.singleton import Singleton
 
