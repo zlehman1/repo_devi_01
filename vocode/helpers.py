@@ -4,6 +4,7 @@ from typing import List, Optional, Tuple, Union
 import sounddevice as sd
 from loguru import logger
 
+from vocode.meta import is_extra_installed
 from vocode.streaming.input_device.microphone_input import (
     MicrophoneInput as StreamingMicrophoneInput,
 )
@@ -129,3 +130,23 @@ def _find_device_with_name(device_infos: List[dict], name: str) -> dict:
         return next(filter(lambda device_info: name == device_info["name"], device_infos))
     except StopIteration:
         raise Exception("Could not find device with name: {}".format(name))
+
+
+def ensure_punkt_installed():
+    try:
+        from nltk.data import find
+
+        find("tokenizers/punkt")
+        logger.debug("'punkt' tokenizer is already installed.")
+    except LookupError:
+        from nltk import download
+
+        # If not installed, download 'punkt'
+        logger.info("Downloading 'punkt' tokenizer...")
+        download("punkt")
+        logger.info("'punkt' tokenizer downloaded successfully.")
+    except ImportError as err:
+        if is_extra_installed("synthesizers"):
+            raise Exception(
+                "The 'punkt' tokenizer is required for the Eleven Labs synthesizer."
+            ) from err
