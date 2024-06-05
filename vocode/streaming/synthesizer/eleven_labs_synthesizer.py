@@ -38,6 +38,7 @@ class ElevenLabsSynthesizer(BaseSynthesizer[ElevenLabsSynthesizerConfig]):
         self.optimize_streaming_latency = synthesizer_config.optimize_streaming_latency
         self.words_per_minute = 150
         self.upsample = False
+        self.sample_rate = self.synthesizer_config.sampling_rate
 
         if self.synthesizer_config.audio_encoding == AudioEncoding.LINEAR16:
             match self.synthesizer_config.sampling_rate:
@@ -52,6 +53,7 @@ class ElevenLabsSynthesizer(BaseSynthesizer[ElevenLabsSynthesizerConfig]):
                 case SamplingRate.RATE_48000:
                     self.output_format = "pcm_44100"
                     self.upsample = SamplingRate.RATE_48000.value
+                    self.sample_rate = SamplingRate.RATE_44100.value
                 case _:
                     raise ValueError(
                         f"Unsupported sampling rate: {self.synthesizer_config.sampling_rate}. Elevenlabs only supports 16000, 22050, 24000, and 44100 Hz."
@@ -148,7 +150,7 @@ class ElevenLabsSynthesizer(BaseSynthesizer[ElevenLabsSynthesizerConfig]):
                 if self.upsample:
                     chunk = self._resample_chunk(
                         chunk,
-                        self.synthesizer_config.sampling_rate,
+                        self.sample_rate,
                         self.upsample,
                     )
                 chunk_queue.put_nowait(chunk)

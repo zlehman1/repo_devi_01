@@ -108,6 +108,8 @@ class ElevenLabsWSSynthesizer(
             "writer": None,
         }
         self.end_of_turn = False
+        self.upsample = False
+        self.sample_rate = self.synthesizer_config.sampling_rate
 
         # While this looks useless, we need to assign the response of `asyncio.gather`
         # to *something* or we risk garbage collection of the running coroutines spawned
@@ -124,6 +126,10 @@ class ElevenLabsWSSynthesizer(
                     self.output_format = "pcm_24000"
                 case SamplingRate.RATE_44100:
                     self.output_format = "pcm_44100"
+                case SamplingRate.RATE_48000:
+                    self.output_format = "pcm_44100"
+                    self.upsample = SamplingRate.RATE_48000.value
+                    self.sample_rate = SamplingRate.RATE_44100.value
                 case _:
                     raise ValueError(
                         f"Unsupported sampling rate: {self.synthesizer_config.sampling_rate}. Elevenlabs only supports 16000, 22050, 24000, and 44100 Hz."
@@ -212,12 +218,21 @@ class ElevenLabsWSSynthesizer(
                     message = await ws.recv()
                     if "audio" not in message:
                         continue
-                    response = ElevenLabsWebsocketResponse.parse_raw(message)
+                    response = ElevenLabsWebsocketResponse.model_validate_json(message)
                     if response.audio:
                         decoded = base64.b64decode(response.audio)
                         seconds = len(decoded) / (
                             self.sample_width * self.synthesizer_config.sampling_rate
                         )
+
+                        if self.upsample:
+                            decoded = self._resample_chunk(
+                                decoded,
+                                self.sample_rate,
+                                self.upsample,
+                            )
+                            seconds = len(decoded) / (self.sample_width * self.sample_rate)
+
                         if response.alignment:
                             utterance_chunk = "".join(response.alignment.chars) + " "
                             self.current_turn_utterances_by_chunk.append((utterance_chunk, seconds))
