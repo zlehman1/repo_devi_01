@@ -67,11 +67,15 @@ class ElevenLabsSynthesizer(BaseSynthesizer[ElevenLabsSynthesizerConfig]):
         is_sole_text_chunk: bool = False,
     ) -> SynthesisResult:
         self.total_chars += len(message.text)
-        voice = Voice(voice_id=self.voice_id)
         if self.stability is not None and self.similarity_boost is not None:
-            voice.settings = VoiceSettings(
-                stability=self.stability, similarity_boost=self.similarity_boost
+            voice = Voice(
+                voice_id=self.voice_id,
+                settings=VoiceSettings(
+                    stability=self.stability, similarity_boost=self.similarity_boost
+                ),
             )
+        else:
+            voice = Voice(voice_id=self.voice_id)
         url = (
             ELEVEN_LABS_BASE_URL
             + f"text-to-speech/{self.voice_id}/stream?output_format={self.output_format}"
