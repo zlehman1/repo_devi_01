@@ -5,7 +5,7 @@ from uuid import UUID
 
 from loguru import logger
 
-from vocode.helpers import ensure_punkt_installed
+from vocode.meta import ensure_punkt_installed
 
 try:
     import sentry_sdk
