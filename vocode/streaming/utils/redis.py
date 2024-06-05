@@ -8,14 +8,11 @@ try:
     from redis.backoff import ExponentialBackoff, NoBackoff
     from redis.exceptions import ConnectionError, TimeoutError
     from redis.retry import Retry
+
+    REDIS_INSTALLED = True
 except ImportError:
     logger.warning("Redis not installed!")
-    Redis = None
-    ExponentialBackoff = None
-    NoBackoff = None
-    ConnectionError = None
-    TimeoutError = None
-    Retry = None
+    REDIS_INSTALLED = False
 
 from vocode.streaming.utils.singleton import Singleton
 
@@ -25,6 +22,8 @@ WorkerInputType = TypeVar("WorkerInputType")
 
 
 def initialize_redis(retries: int = 1):
+    if not REDIS_INSTALLED:
+        return None
     backoff = ExponentialBackoff() if retries > 1 else NoBackoff()
     retry = Retry(backoff, retries)
     return Redis(  # type: ignore
@@ -42,6 +41,8 @@ def initialize_redis(retries: int = 1):
 
 
 def initialize_redis_bytes():
+    if not REDIS_INSTALLED:
+        return None
     return Redis(
         host=os.environ.get("REDISHOST", "localhost"),
         port=int(os.environ.get("REDISPORT", 6379)),

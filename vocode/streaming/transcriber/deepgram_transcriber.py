@@ -79,7 +79,9 @@ class DeepgramTranscriber(BaseAsyncTranscriber[DeepgramTranscriberConfig]):
         transcriber_config: DeepgramTranscriberConfig,
     ):
         super().__init__(transcriber_config)
-        self.api_key = os.environ["DEEPGRAM_API_KEY"]
+        self.api_key = os.environ.get("DEEPGRAM_API_KEY")
+        if not self.api_key:
+            raise Exception("DEEPGRAM_API_KEY not set")
         self._ended = False
         self.is_ready = False
         self.audio_cursor = 0.0
