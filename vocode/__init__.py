@@ -5,12 +5,37 @@ from uuid import UUID
 
 from loguru import logger
 
+from vocode.meta import is_extra_installed
+
 try:
     import sentry_sdk
 
     SENTRY_SDK_AVAILABLE = True
 except ImportError:
     SENTRY_SDK_AVAILABLE = False
+
+
+def ensure_punkt_installed():
+    try:
+        from nltk.data import find
+
+        find("tokenizers/punkt")
+        logger.debug("'punkt' tokenizer is already installed.")
+    except LookupError:
+        from nltk import download
+
+        # If not installed, download 'punkt'
+        logger.info("Downloading 'punkt' tokenizer...")
+        download("punkt")
+        logger.info("'punkt' tokenizer downloaded successfully.")
+    except ImportError as err:
+        if is_extra_installed("synthesizers"):
+            raise Exception(
+                "The 'punkt' tokenizer is required for the Eleven Labs synthesizer."
+            ) from err
+
+
+ensure_punkt_installed()
 
 environment = {}
 logger.disable("vocode")
