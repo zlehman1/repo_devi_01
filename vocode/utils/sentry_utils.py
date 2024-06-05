@@ -14,6 +14,7 @@ except ImportError:
     logger.debug("Sentry SDK not detected -- disabling metrics!")
     SENTRY_SDK_AVAILABLE = False
     Span = None
+    _SpanRecorder = object
 
 if TYPE_CHECKING:
     from vocode.streaming.synthesizer.base_synthesizer import BaseSynthesizer

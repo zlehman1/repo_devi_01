@@ -1,5 +1,6 @@
 from typing import Dict, Sequence, Type
 
+from vocode.meta import is_extra_installed
 from vocode.streaming.action.abstract_factory import AbstractActionFactory
 from vocode.streaming.action.base_action import BaseAction
 from vocode.streaming.action.dtmf import TwilioDTMF, VonageDTMF
@@ -21,15 +22,16 @@ CONVERSATION_ACTIONS: Dict[ActionType, Type[BaseAction]] = {
     ActionType.EXECUTE_EXTERNAL_ACTION: ExecuteExternalAction,
 }
 
-VONAGE_ACTIONS: Dict[ActionType, Type[VonagePhoneConversationAction]] = {
-    ActionType.TRANSFER_CALL: VonageTransferCall,
-    ActionType.DTMF: VonageDTMF,
-}
+if is_extra_installed("telephony"):
+    VONAGE_ACTIONS: Dict[ActionType, Type[VonagePhoneConversationAction]] = {
+        ActionType.TRANSFER_CALL: VonageTransferCall,
+        ActionType.DTMF: VonageDTMF,
+    }
 
-TWILIO_ACTIONS: Dict[ActionType, Type[TwilioPhoneConversationAction]] = {
-    ActionType.TRANSFER_CALL: TwilioTransferCall,
-    ActionType.DTMF: TwilioDTMF,
-}
+    TWILIO_ACTIONS: Dict[ActionType, Type[TwilioPhoneConversationAction]] = {
+        ActionType.TRANSFER_CALL: TwilioTransferCall,
+        ActionType.DTMF: TwilioDTMF,
+    }
 
 
 class DefaultActionFactory(AbstractActionFactory):

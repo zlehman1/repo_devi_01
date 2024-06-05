@@ -1,13 +1,16 @@
 from enum import Enum
-from typing import List, Literal, Optional, Union
+from typing import TYPE_CHECKING, List, Literal, Optional, Union
 
-from langchain.prompts import PromptTemplate
 from pydantic.v1 import validator
+
+from vocode.streaming.models.actions import ActionConfig
+from vocode.streaming.models.message import BaseMessage
 
 from .model import BaseModel, TypedModel
 from .vector_db import VectorDBConfig
-from vocode.streaming.models.actions import ActionConfig
-from vocode.streaming.models.message import BaseMessage
+
+if TYPE_CHECKING:
+    from langchain.prompts import PromptTemplate
 
 FILLER_AUDIO_DEFAULT_SILENCE_THRESHOLD_SECONDS = 0.5
 LLM_AGENT_DEFAULT_TEMPERATURE = 1.0
@@ -136,7 +139,7 @@ class ChatVertexAIAgentConfig(AgentConfig, type=AgentType.CHAT_VERTEX_AI.value):
 class LlamacppAgentConfig(AgentConfig, type=AgentType.LLAMACPP.value):  # type: ignore
     prompt_preamble: str
     llamacpp_kwargs: dict = {}
-    prompt_template: Optional[Union[PromptTemplate, str]] = None
+    prompt_template: Optional[Union["PromptTemplate", str]] = None
 
 
 class InformationRetrievalAgentConfig(
