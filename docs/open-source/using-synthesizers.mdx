@@ -48,15 +48,25 @@ The method hardcodes some values like the `sampling_rate` and `audio_encoding` f
 
 #### ElevenLabs Input Streaming
 
-You can try out our experimental implementation of ElevenLabs' [input streaming API](https://elevenlabs.io/docs/api-reference/websockets) by passing in `experimental_websocket=True` into the config, like:
+You can try out our experimental implementation of ElevenLabs' [input streaming API](https://elevenlabs.io/docs/api-reference/websockets) by passing in `experimental_websocket=True` into the config and using the `ElevenLabsWSSynthesizer`, like:
 
 ```
+from vocode.streaming.synthesizer.eleven_labs_websocket_synthesizer import ElevenLabsWSSynthesizer
+from vocode.streaming.models.synthesizer import ElevenLabsSynthesizerConfig
+
 ...
 synthesizer_config=ElevenLabsSynthesizerConfig.from_telephone_output_device(
     api_key=os.getenv("ELEVENLABS_API_KEY"),
     voice_id=os.getenv("YOUR VOICE ID"),
     experimental_websocket=True
 )
+...
+synthesizer=ElevenLabsWSSynthesizer(ElevenLabsSynthesizerConfig.from_output_device(
+    speaker_output,
+    api_key=os.getenv("ELEVENLABS_API_KEY"),
+    voice_id=os.getenv("YOUR VOICE ID"),
+    experimental_websocket=True
+))
 ...
 ```
 
