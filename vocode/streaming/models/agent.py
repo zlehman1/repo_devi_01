@@ -191,3 +191,20 @@ class RESTfulAgentText(RESTfulAgentOutput, type=RESTfulAgentOutputType.TEXT):  #
 
 class RESTfulAgentEnd(RESTfulAgentOutput, type=RESTfulAgentOutputType.END):  # type: ignore
     pass
+
+
+class GroqAgentConfigType(AgentConfig, type=AgentType.CHAT_GPT.value):  # type: ignore
+    groq_api_key: Optional[str] = None
+    model_name: str = CHAT_GPT_AGENT_DEFAULT_MODEL_NAME
+    temperature: float = LLM_AGENT_DEFAULT_TEMPERATURE
+    max_tokens: int = LLM_AGENT_DEFAULT_MAX_TOKENS
+    vector_db_config: Optional[VectorDBConfig] = None
+
+
+class GeneratedResponse(BaseModel):
+    response: str
+    confidence: Optional[float] = None
+
+
+class EndOfTurn(BaseModel):
+    end: bool = True

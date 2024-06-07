@@ -5,6 +5,7 @@ import secrets
 import wave
 from string import ascii_letters, digits
 from typing import Any, AsyncGenerator, AsyncIterator, Callable, List, Tuple, TypeVar
+import logging
 
 from vocode.streaming.models.audio import AudioEncoding
 
@@ -12,6 +13,14 @@ custom_alphabet = ascii_letters + digits + ".-_"
 
 ChoiceType = TypeVar("ChoiceType")
 
+# Configure logger
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+ch.setFormatter(formatter)
+logger.addHandler(ch)
 
 def create_loop_in_thread(loop: asyncio.AbstractEventLoop, long_running_task=None):
     asyncio.set_event_loop(loop)
